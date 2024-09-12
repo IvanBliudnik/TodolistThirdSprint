@@ -1,5 +1,6 @@
 import {TasksStateType} from '../App'
 import {v1} from "uuid";
+import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
 
 
 export const tasksReducer = (state: TasksStateType, action: ActionsType): TasksStateType => {
@@ -28,6 +29,15 @@ export const tasksReducer = (state: TasksStateType, action: ActionsType): TasksS
             const { taskId, todolistId, title } = action.payload
             return {
                 ...state, [todolistId]:state[todolistId].map(t => t.id===taskId? {...t, title:title} : t)}}
+        case 'ADD_TODOLIST': {
+            return {
+                ...state, [action.payload.id]:[]} //создали todolistId3 = []
+            }
+        case 'REMOVE_TODOLIST': {
+                const copyState = {...state} //создали копию state чтобы не мутировать старый state
+                delete copyState[action.payload.id] //удалили из копии id
+                return copyState //вернули новую копию обьекта
+            }
         default:
             throw new Error("I don't understand this type")
     }
@@ -46,11 +56,15 @@ export const changeTaskStatusAC = (payload: { taskId: string, todolistId: string
 export const changeTaskTitleAC = (payload: { taskId: string, todolistId: string, title: string }) => {
     return {type: 'CHANGE_TASK_TITLE_STATUS', payload} as const
 }
+// export const addTodolistAC = ( title: string ) => {
+//     return {type: 'ADD_TODOLIST', payload: {title, id:v1()}} as const
+// } он тоже не нужен тут addTodolistAC в todolistReducer
 
 // Actions types
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
 export type ChangeTaskActionType = ReturnType<typeof changeTaskStatusAC>
-export type changeTaskTitleACActionType = ReturnType<typeof changeTaskTitleAC>
+export type ChangeTaskTitleACActionType = ReturnType<typeof changeTaskTitleAC>
+// export type AddTodolistActionType = ReturnType<typeof addTodolistAC> берём из todolistReducer тип = AddTodolistActionType
 
-type ActionsType = RemoveTaskActionType | AddTaskActionType | ChangeTaskActionType | changeTaskTitleACActionType
+type ActionsType = RemoveTaskActionType | AddTaskActionType | ChangeTaskActionType | ChangeTaskTitleACActionType | AddTodolistActionType | RemoveTodolistActionType

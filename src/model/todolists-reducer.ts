@@ -12,13 +12,12 @@ const initialState: TodolistType[] = [
 
 export const todolistsReducer = (state: TodolistType[] = initialState, action: ActionsType) => {
 	switch (action.type) {
-		case 'REMOVE-TODOLIST': {
+		case 'REMOVE_TODOLIST': {
 			return state.filter(tl => tl.id !== action.payload.id)
 		}
 
-		case 'ADD-TODOLIST': {
-			const todolistId = v1()
-			const newTodolist: TodolistType = {id: todolistId, title: action.payload.title, filter: 'all'}
+		case 'ADD_TODOLIST': {
+			const newTodolist: TodolistType = {id: action.payload.id, title: action.payload.title, filter: 'all'}
 			return [...state, newTodolist]
 		}
 
@@ -37,11 +36,11 @@ export const todolistsReducer = (state: TodolistType[] = initialState, action: A
 
 // Action creators
 export const removeTodolistAC = (todolistId: string) => {
-	return {type: 'REMOVE-TODOLIST', payload: {id: todolistId}} as const
+	return {type: 'REMOVE_TODOLIST', payload: {id: todolistId}} as const
 }
 
 export const addTodolistAC = (title: string) => {
-	return {type: 'ADD-TODOLIST', payload: {title}} as const
+	return {type: 'ADD_TODOLIST', payload: {title, id: v1()}} as const //тут тоже прописываем добавление id
 };
 
 export const changeTodolistTitleAC = (id: string, title: string) => {
@@ -49,7 +48,7 @@ export const changeTodolistTitleAC = (id: string, title: string) => {
 };
 
 export const changeTodolistFilter = (id: string, filter: FilterValuesType) => {
-	return {type: 'CHANGE-TODOLIST-FILTER', payload: {id, filter}} as const
+	return {type: 'CHANGE-TODOLIST-FILTER', payload: {id, filter}} as const //добавили id для генерирования
 }
 
 // Actions types
@@ -63,7 +62,7 @@ export const changeTodolistFilter = (id: string, filter: FilterValuesType) => {
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC> //{type: 'REMOVE-TODOLIST', payload: {id: todolistId}} as const
 //старая версия
 // export type AddTodolistActionType = {
-// 	type: 'ADD-TODOLIST';
+// 	type: 'ADD_TODOLIST';
 // 	payload: {
 // 		title: string;
 // 	}
