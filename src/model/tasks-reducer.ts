@@ -1,11 +1,10 @@
-import {TasksStateType} from '../App'
+import {TasksStateType, TaskType} from '../App'
 import {v1} from "uuid";
 import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
 
 
 export const tasksReducer = (state: TasksStateType, action: ActionsType): TasksStateType => {
     switch (action.type) {
-        //оборачиваем ...state в обьект потому что начальный state = {}
         case 'REMOVE_TASK': {
             return {
                 ...state,
@@ -13,8 +12,9 @@ export const tasksReducer = (state: TasksStateType, action: ActionsType): TasksS
             }
         }//надо разобраться gpt
         case 'ADD_TASK': {
+            const newTask: TaskType = {id: v1(), title: action.payload.title, isDone: false}
             return {
-                ...state, [action.payload.todolistId]: [{id: v1(), title: action.payload.title, isDone: false}, ...state[action.payload.todolistId]]
+                ...state, [action.payload.todolistId]: [newTask, ...state[action.payload.todolistId]]
             }}
         case 'CHANGE_TASK_STATUS': {
             const { taskId, todolistId, isDone } = action.payload
@@ -56,15 +56,11 @@ export const changeTaskStatusAC = (payload: { taskId: string, todolistId: string
 export const changeTaskTitleAC = (payload: { taskId: string, todolistId: string, title: string }) => {
     return {type: 'CHANGE_TASK_TITLE_STATUS', payload} as const
 }
-// export const addTodolistAC = ( title: string ) => {
-//     return {type: 'ADD_TODOLIST', payload: {title, id:v1()}} as const
-// } он тоже не нужен тут addTodolistAC в todolistReducer
 
 // Actions types
 export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>
 export type AddTaskActionType = ReturnType<typeof addTaskAC>
 export type ChangeTaskActionType = ReturnType<typeof changeTaskStatusAC>
 export type ChangeTaskTitleACActionType = ReturnType<typeof changeTaskTitleAC>
-// export type AddTodolistActionType = ReturnType<typeof addTodolistAC> берём из todolistReducer тип = AddTodolistActionType
 
 type ActionsType = RemoveTaskActionType | AddTaskActionType | ChangeTaskActionType | ChangeTaskTitleACActionType | AddTodolistActionType | RemoveTodolistActionType
